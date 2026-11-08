@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운정고 자주 틀리는 한글 맞춤법 150 퀴즈 & 오답노트</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
+        .correct-btn { background-color: #10b981 !important; color: white !important; border-color: #059669 !important; }
+        .wrong-btn { background-color: #ef4444 !important; color: white !important; border-color: #dc2626 !important; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-3 sm:p-6">
+
+    <!-- Container Card -->
+    <div class="w-full max-w-3xl bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200 transition-all">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-white text-center relative">
+            <span class="inline-block px-3 py-1 bg-white/20 text-xs font-semibold rounded-full mb-2 tracking-wide">운정고 1학년 맞춤법 완벽 대비</span>
+            <h1 class="text-2xl sm:text-3xl font-black">자주 틀리는 한글 맞춤법 150</h1>
+            <p class="text-indigo-100 text-xs sm:text-sm mt-1">1번부터 150번까지 전체 문항 완벽 수록 & 오답노트 지원</p>
+        </div>
+
+        <!-- 1. Start / Mode Selection Screen -->
+        <div id="start-screen" class="p-6 sm:p-8 text-center">
+            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner">
+                📚
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-2">학습할 범위를 선택하세요</h2>
+            <p class="text-slate-500 text-sm mb-6">원하는 범위를 정해 문제를 풀고, 끝난 뒤 틀린 문항만 오답노트로 복습하세요!</p>
+            
+            <!-- Range Selection Buttons -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <button onclick="selectRange(0, 50)" class="range-btn p-3 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl font-bold text-slate-700 transition-all">
+                    1 ~ 50번
+                </button>
+                <button onclick="selectRange(50, 100)" class="range-btn p-3 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl font-bold text-slate-700 transition-all">
+                    51 ~ 100번
+                </button>
+                <button onclick="selectRange(100, 150)" class="range-btn p-3 bg-slate-50 hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl font-bold text-slate-700 transition-all">
+                    101 ~ 150번
+                </button>
+                <button onclick="selectRange(0, 150)" class="range-btn p-3 bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-500 rounded-2xl font-bold text-indigo-700 transition-all col-span-2 sm:col-span-1">
+                    전체 (1~150번)
+                </button>
+            </div>
+
+            <button id="start-btn" onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg rounded-2xl shadow-lg shadow-indigo-200 transition-all">
+                퀴즈 시작하기 🚀
+            </button>
+        </div>
+
+        <!-- 2. Quiz Screen -->
+        <div id="quiz-screen" class="p-6 sm:p-8 hidden">
+            <!-- Header Progress -->
+            <div class="flex items-center justify-between mb-3 text-sm font-semibold">
+                <span id="quiz-badge" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
+                    문제 1 / 150
+                </span>
+                <span class="text-slate-500">
+                    현재 맞힌 개수: <span id="current-score" class="font-bold text-emerald-600">0</span>개
+                </span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2.5 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-6 sm:p-8 mb-6 text-center shadow-sm">
+                <div id="question-number" class="text-xs font-bold text-indigo-500 tracking-wider mb-1">NO. 1</div>
+                <h3 id="question-text" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+                    <!-- Sentence -->
+                </h3>
+            </div>
+
+            <!-- Options (2 Choice Buttons) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <button onclick="selectOption(0)" id="opt-0" class="option-btn p-4 text-lg font-bold border-2 border-slate-200 rounded-2xl hover:border-indigo-500 hover:bg-indigo-50/40 transition-all text-slate-800 flex items-center justify-center min-h-[64px] shadow-sm">
+                    <!-- Opt 0 -->
+                </button>
+                <button onclick="selectOption(1)" id="opt-1" class="option-btn p-4 text-lg font-bold border-2 border-slate-200 rounded-2xl hover:border-indigo-500 hover:bg-indigo-50/40 transition-all text-slate-800 flex items-center justify-center min-h-[64px] shadow-sm">
+                    <!-- Opt 1 -->
+                </button>
+            </div>
+
+            <!-- Instant Feedback Box -->
+            <div id="explanation-box" class="hidden mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm leading-relaxed">
+                <div id="result-status" class="font-bold text-base mb-1"></div>
+                <div id="explanation-text" class="text-slate-600"></div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="flex justify-between items-center pt-2">
+                <button id="prev-btn" onclick="prevQuestion()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-xl text-sm transition-all hidden">
+                    ← 이전
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="ml-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm shadow-md transition-all hidden">
+                    다음 문제 →
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Result Screen -->
+        <div id="result-screen" class="p-6 sm:p-8 text-center hidden">
+            <div id="result-emoji" class="text-6xl mb-3">🎉</div>
+            <h2 class="text-2xl font-extrabold text-slate-800 mb-1">퀴즈 완료!</h2>
+            <p id="result-range-info" class="text-sm text-slate-500 mb-6"></p>
+            
+            <div class="grid grid-cols-3 gap-3 bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6">
+                <div>
+                    <div class="text-xs text-slate-400 font-medium mb-1">총 문제</div>
+                    <div id="res-total" class="text-xl font-bold text-slate-700">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-emerald-500 font-medium mb-1">정답 개수</div>
+                    <div id="res-correct" class="text-xl font-bold text-emerald-600">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-rose-500 font-medium mb-1">틀린 개수</div>
+                    <div id="res-wrong" class="text-xl font-bold text-rose-600">0</div>
+                </div>
+            </div>
+
+            <div id="score-percentage" class="text-3xl font-black text-indigo-600 mb-6">
+                점수: 100점
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button id="incorrect-note-btn" onclick="openIncorrectNote()" class="px-6 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl shadow-md transition-all flex items-center justify-center gap-2">
+                    <span>📕</span> 틀린 문제 오답노트 (<span id="wrong-count-badge">0</span>개)
+                </button>
+                <button onclick="resetQuiz()" class="px-6 py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-2xl shadow-md transition-all">
+                    처음으로 돌아가기 🔄
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. Incorrect Note Screen (오답노트) -->
+        <div id="note-screen" class="p-6 sm:p-8 hidden">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span>📕</span> 오답노트 & 해설
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">틀린 문제를 확인하고 확실하게 익혀보세요.</p>
+                </div>
+                <button onclick="startWrongOnlyQuiz()" id="retest-wrong-btn" class="px-4 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-xl text-xs sm:text-sm transition-all">
+                    오답만 다시 풀어보기 ✍️
+                </button>
+            </div>
+
+            <!-- List Container -->
+            <div id="wrong-list-container" class="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Dynamic Items -->
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
+                <button onclick="showResultFromNote()" class="px-6 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-all">
+                    결과 화면으로
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Complete 150 Question Dataset -->
+    <script>
+        const fullQuizData = [
+            { id: 1, prefix: "병이 얼른 ", suffix: " 좋겠다.", options: ["낫으면", "나으면"], answer: 1, explanation: "'낫다'는 'ㅅ' 불규칙 용언으로 어미 '-으면'이 붙으면 'ㅅ'이 탈락하여 '나으면'이 됩니다." },
+            { id: 2, prefix: "이 옷이 더 ", suffix: "하지?", options: ["무안", "무난"], answer: 1, explanation: "이렇다 할 단점이나 흠이 없어 무던한 것은 '무난(無難)'입니다." },
+            { id: 3, prefix: "오늘은 ", suffix: " 숙제 다 할 거야.", options: ["반드시", "반듯이"], answer: 0, explanation: "'틀림없이 꼭'의 의미일 때는 '반드시'를 씁니다. ('반듯이'는 반듯하게의 뜻)" },
+            { id: 4, prefix: "왜 난리 ", suffix: "인지 모르겠네.", options: ["법석", "법썩"], answer: 0, explanation: "한자어가 아니거나 된소리 표기 규정에 따라 '법석'이 표준어입니다." },
+            { id: 5, prefix: "머리를 ", suffix: " 잘랐어.", options: ["싹뚝", "싹둑"], answer: 1, explanation: "ㄱ, ㅂ 받침 뒤에서 나는 된소리는 거센소리나 된소리로 적지 않고 '싹둑'으로 표기합니다." },
+            { id: 6, prefix: "기억이 ", suffix: " 났어.", options: ["언듯", "언뜻"], answer: 1, explanation: "지나가는 모양이나 생각이 잠깐 떠오르는 것은 '언뜻'이 올바릅니다." },
+            { id: 7, prefix: "입맛 돋우는 ", suffix: " 비빔밥", options: ["짭잘한", "짭짤한"], answer: 1, explanation: "감칠맛이 있게 짭조름한 것은 '짭짤하다'가 올바른 표준어입니다." },
+            { id: 8, prefix: "김치를 ", suffix: ".", options: ["담갔다", "담궜다"], answer: 0, explanation: "기본형 '담그다'에 어미 '-았다'가 붙으면 'ㅡ'가 탈락하여 '담갔다'가 됩니다." },
+            { id: 9, prefix: "바른 표기를 고르세요: (", suffix: ")", options: ["깍두기", "깍뚝이"], answer: 0, explanation: "무를 깍둑썰어 만든 김치는 '깍두기'가 올바른 표기입니다." },
+            { id: 10, prefix: "물을 넣고 ", suffix: " 주세요.", options: ["줄여", "조려"], answer: 1, explanation: "찌개나 국물의 국물을 바짝 줄이는 것은 '조리다(조려)'입니다." },
+            { id: 11, prefix: "직접 ", suffix: " 대추차", options: ["달인", "다린"], answer: 0, explanation: "약재나 차를 오랫동안 끓이는 것은 '달이다(달인)'입니다. (다리다: 옷을 다림질하다)" },
+            { id: 12, prefix: "바른 표기를 고르세요: (", suffix: ")", options: ["오뚝이", "오뚜기"], answer: 0, explanation: "부사 '오뚝'에 접미사 '-이'가 붙은 '오뚝이'가 올바른 표준어입니다." },
+            { 13: true, id: 13, prefix: "날짜나 날수를 물을 때: (", suffix: ")", options: ["며칠", "몇 일"], answer: 0, explanation: "한글 맞춤법상 '몇 일'은 존재하지 않으며 항상 '며칠'로 적습니다." },
+            { id: 14, prefix: "내가 가도 ", suffix: "?", options: ["돼", "되"], answer: 0, explanation: "종결 어미 위치이므로 '되어'의 줄임말인 '돼'가 올바릅니다." },
+            { id: 15, prefix: "그렇게 하면 ", suffix: ".", options: ["돼요", "되요"], answer: 0, explanation: "'되어요'의 줄임말인 '돼요'가 맞습니다." },
+            { id: 16, prefix: "내일 또 ", suffix: ".", options: ["봐요", "뵈요"], answer: 0, explanation: "'뵈다'에 어미 '-어'가 붙으면 '뵈어(봬)'가 되므로 '봬요' 또는 '봐요'를 씁니다." },
+            { id: 17, prefix: "일이 잘 ", suffix: " 바란다.", options: ["되길", "돼길"], answer: 0, explanation: "'되- + -길' 형태이므로 '되길'이 올바릅니다. ('돼'는 '되어'의 줄임)" },
+            { id: 18, prefix: "성공 확률을 나타낼 때: (", suffix: ")", options: ["성공율", "성공률"], answer: 1, explanation: "받침 있는 단어 뒤에는 '률'을 씁니다. (성공 + 률)" },
+            { id: 19, prefix: "백분율 표기: (", suffix: ")", options: ["백분율", "백분률"], answer: 0, explanation: "'ㄴ' 받침 뒤에는 '율'을 씁니다. (백분 + 율)" },
+            { id: 20, prefix: "바른 표기 조합: (", suffix: ")", options: ["눈곱 / 배꼽", "눈꼽 / 배곱"], answer: 0, explanation: "'눈곱'과 '배꼽'이 각각 올바른 표준어입니다." },
+            { id: 21, prefix: "복잡하게 얽힌 모양: (", suffix: ")", options: ["얽히고설키다", "얽히고설히다"], answer: 0, explanation: "'얽히고설키다'가 올바른 표준어 표기입니다." },
+            { id: 22, prefix: "중화요리 면 이름: (", suffix: ")", options: ["짜장면", "자장면"], answer: 0, explanation: "현재는 '짜장면'과 '자장면' 둘 다 복수 표준어입니다." },
+            { id: 23, prefix: "대응이 늦을 때: (", suffix: ")", options: ["늑장 대응", "늦장 대응"], answer: 0, explanation: "'늑장'과 '늦장' 모두 복수 표준어입니다." },
+            { id: 24, prefix: "제 소개는 이 그림으로 ", suffix: "하겠습니다.", options: ["갈음", "가름"], answer: 0, explanation: "다른 것으로 대신하는 것은 '갈음'입니다. (가름: 쪼개거나 나누는 것)" },
+            { 25: true, id: 25, prefix: "어림잡아 셈할 때: ", suffix: " 한 시간 정도 걸려.", options: ["겉잡아서", "걷잡아서"], answer: 0, explanation: "겉으로 어림잡는 것은 '겉잡다'입니다. ('걷잡다'는 억누르거나 거두어잡다)" },
+            { id: 26, prefix: "해를 높여 부르는 말: (", suffix: ")", options: ["해님", "햇님"], answer: 0, explanation: "접미사 '-님' 앞에는 사이시옷을 붙이지 않으므로 '해님'이 올바릅니다." },
+            { id: 27, prefix: "운동을 시작한 지 ", suffix: "로 오 년.", options: ["해수", "햇수"], answer: 1, explanation: "해의 수를 뜻하는 우리말은 사이시옷이 붙은 '햇수'입니다." },
+            { id: 28, prefix: "올바른 세방 표기: (", suffix: ")", options: ["전세방 / 셋방", "전셋방 / 세방"], answer: 0, explanation: "전세방(한자+한자 사이시옷X), 셋방(2음절 한자어 예외 사이시옷O)" },
+            { id: 29, prefix: "남기는 인사말: (", suffix: ")", options: ["인사말", "인삿말"], answer: 0, explanation: "'인사'와 '말'이 결합할 때 덧나지 않아 사이시옷을 붙이지 않은 '인사말'이 맞습니다." },
+            { id: 30, prefix: "높임말 표현: (", suffix: ")", options: ["존댓말", "존대말"], answer: 0, explanation: "'존대'와 '말'이 결합하여 [존댄말]로 소리 나므로 사이시옷을 붙여 '존댓말'로 적습니다." },
+            { id: 31, prefix: "행사가 끝난 뒤 파티: (", suffix: ")", options: ["뒤풀이", "뒷풀이"], answer: 0, explanation: "거센소리(ㅍ) 앞에는 사이시옷을 붙이지 않으므로 '뒤풀이'가 맞습니다." },
+            { id: 32, prefix: "오렌지 색깔의 빛: (", suffix: ")", options: ["오렌지빛", "오렌짓빛"], answer: 0, explanation: "외래어(오렌지) 뒤에는 사이시옷을 받쳐 적지 않습니다." },
+            { id: 33, prefix: "하찮거나 놀람을 나타내는 감탄사: (", suffix: ") 고작 이거야?", options: ["애개", "에게"], answer: 0, explanation: "생각보다 적거나 터무니없을 때 내는 감탄사는 '애개' 또는 '애걔'입니다." },
+            { id: 34, prefix: "나무가 ", suffix: " 뻗어 있었다.", options: ["멋들어지게", "멋드러지게"], answer: 0, explanation: "기본형은 '멋들어지다'가 올바른 표준어입니다." },
+            { id: 35, prefix: "소문이 ", suffix: " 들려왔다.", options: ["간간이", "간간히"], answer: 0, explanation: "시간적 간격을 두고 가끔씩 일어나는 것은 '간간이'입니다." },
+            { id: 36, prefix: "나도 ", suffix: " 생각해 봤어.", options: ["곰곰이", "곰곰히"], answer: 0, explanation: "'곰곰'이라는 부사 뒤에는 '-이'가 붙어 '곰곰이'가 됩니다." },
+            { id: 37, prefix: "방을 ", suffix: " 정리하자.", options: ["깨끗이", "깨끗히"], answer: 0, explanation: "'ㄱ' 받침이나 'ㅅ' 받침 뒤 부사화 접미사는 '-이'로 적으므로 '깨끗이'가 맞습니다." },
+            { id: 38, prefix: "시간을 ", suffix: " 활용하자.", options: ["틈틈이", "틈틈히"], answer: 0, explanation: "돌림자 명사 뒤 부사화 접미사는 '-이'가 붙어 '틈틈이'가 됩니다." },
+            { id: 39, prefix: "일을 ", suffix: " 않고 처리했다.", options: ["서슴지", "서슴치"], answer: 0, explanation: "기본형이 '서슴다'이므로 어미 '-지'가 붙어 '서슴지'가 됩니다. ('서슴하다'X)" },
+            { id: 40, prefix: "그건 앞뒤가 맞지 ", suffix: ".", options: ["않잖아", "안잖아"], answer: 0, explanation: "'않잖아'는 '아니하지 않잖아'의 줄임 표현입니다." },
+            { id: 41, prefix: "운동장이 아주 ", suffix: ".", options: ["널찍하다", "넓직하다"], answer: 0, explanation: "겹받침 ㄼ에서 밟- 외에는 '널찍하다'처럼 소리 나는 대로 적습니다." },
+            { id: 42, prefix: "예전부터 일찍 부사 표기: (", suffix: ")", options: ["일찍이", "일찍기"], answer: 0, explanation: "부사 '일찍'에 접미사 '-이'가 붙은 '일찍이'가 맞습니다." },
+            { id: 43, prefix: "아파서 나 지금 (", suffix: ")", options: ["어떡해", "어떻해"], answer: 0, explanation: "'어떻게 해'의 줄임 표현은 '어떡해'입니다." },
+            { id: 44, prefix: "오늘은 ", suffix: " 기분이 좋다.", options: ["왠지", "웬지"], answer: 0, explanation: "'왜 그런지 모르게'의 의미는 오직 '왠지'뿐입니다." },
+            { id: 45, prefix: "이게 ", suffix: " 일이니?", options: ["웬일인지", "왠일인지"], answer: 0, explanation: "'어찌 된 일'을 뜻할 때는 '웬일'을 씁니다." },
+            { id: 46, prefix: "퀴즈 정답을 ", suffix: ".", options: ["맞히다", "맞추다"], answer: 0, explanation: "적중시키거나 옳게 답을 대는 것은 '맞히다'입니다." },
+            { id: 47, prefix: "사람들이 줄을 ", suffix: ".", options: ["맞추다", "맞히다"], answer: 0, explanation: "줄이나 일치하도록 줄을 대어보는 것은 '맞추다'입니다." },
+            { id: 48, prefix: "화살을 과녁에 ", suffix: ".", options: ["맞히다", "맞추다"], answer: 0, explanation: "목표물에 부딪치게 하는 것은 '맞히다'입니다." },
+            { id: 49, prefix: "주사나 예방접종을 ", suffix: ".", options: ["맞히다", "맞추다"], answer: 0, explanation: "약물/주사를 맞게 하는 것은 '맞히다'입니다." },
+            { 50: true, id: 50, prefix: "그는 나를 묵묵히 ", suffix: " 쳐다봤다.", options: ["지그시", "지긋이"], answer: 0, explanation: "슬그머니 힘을 주거나 견디는 모습은 '지그시'입니다." },
+            { id: 51, prefix: "연세가 ", suffix: " 드신 어르신", options: ["지긋이", "지그시"], answer: 0, explanation: "나이가 상당하여 듬직한 것은 '지긋이'입니다." },
+            { id: 52, prefix: "액자를 삐뚤어지지 않게 ", suffix: " 놓아라.", options: ["반듯이", "반드시"], answer: 0, explanation: "기울어짐 없이 바른 상태는 '반듯이'입니다." },
+            { id: 53, prefix: "가방을 어깨에 ", suffix: ".", options: ["메다", "매다"], answer: 0, explanation: "어깨에 짊어지는 것은 '메다'입니다." },
+            { id: 54, prefix: "풀린 신발끈을 ", suffix: ".", options: ["매다", "메다"], answer: 0, explanation: "끈이나 매듭을 묶는 것은 '매다'입니다." },
+            { id: 55, prefix: "식욕이나 화를 ", suffix: ".", options: ["돋우다", "돋구다"], answer: 0, explanation: "기분, 의욕, 화를 끌어올리는 것은 '돋우다'가 맞습니다." },
+            { 56: true, id: 56, prefix: "시험 공부로 밤을 ", suffix: ".", options: ["새우다", "세우다"], answer: 0, explanation: "잠을 자지 않고 밤을 보내는 것은 '새우다'입니다." },
+            { id: 57, prefix: "높은 건물을 ", suffix: ".", options: ["세우다", "새우다"], answer: 0, explanation: "Structure를 건립하는 것은 '세우다'입니다." },
+            { id: 58, prefix: "나에겐 한 가지 ", suffix: "이 있어.", options: ["바람", "바램"], answer: 0, explanation: "소원이나 희망을 뜻하는 명사는 '바람'입니다." },
+            { id: 59, prefix: "시험에 합격하길 ", suffix: ".", options: ["바라", "바래"], answer: 0, explanation: "'바라다'의 어미 결합 표준형은 '바라'입니다." },
+            { id: 60, prefix: "바위보다 작은 돌: (", suffix: ")", options: ["돌멩이", "돌맹이"], answer: 0, explanation: "'돌멩이'가 올바른 표준어 표기입니다." },
+            { id: 61, prefix: "정이 떨어질 때: (", suffix: ")가 떨어진다.", options: ["정나미", "정내미"], answer: 0, explanation: "'정나미'가 올바른 표현입니다." },
+            { id: 62, prefix: "치사하고 지나치게 굴 때: (", suffix: ")", options: ["째째하게", "쨉쨉하게"], answer: 0, explanation: "'째째하게'가 올바른 표기입니다." },
+            { id: 63, prefix: "작년의 전년도: (", suffix: ")", options: ["재작년", "제작년"], answer: 0, explanation: "두 해 전을 뜻하는 말은 '재작년(再昨年)'입니다." },
+            { id: 64, prefix: "시간을 겨우 ", suffix: ".", options: ["때우다", "떼우다"], answer: 0, explanation: "시간이나 때우는 것은 '때우다'가 올바릅니다." },
+            { id: 65, prefix: "고기 냄새가 옷에 ", suffix: ".", options: ["배었다", "베었다"], answer: 0, explanation: "냄새나 스며드는 것은 '배다(배었다)'입니다. (베다: 칼로 베다)" },
+            { id: 66, prefix: "아이가 ", suffix: " 울음을 그쳤다.", options: ["금세", "금새"], answer: 0, explanation: "'금시에'의 줄임말이므로 '금세'로 적습니다." },
+            { id: 67, prefix: "요즘의 뜻: (", suffix: ") 입맛이 없다.", options: ["요새", "요세"], answer: 0, explanation: "'요사이'의 줄임말은 '요새'입니다." },
+            { id: 68, prefix: "잔디나 머리를 (", suffix: ")", options: ["깎다", "깍다"], answer: 0, explanation: "'깎다'가 올바른 겹받침 표기입니다." },
+            { id: 69, prefix: "옷에 얼룩이 ", suffix: ".", options: ["묻다", "뭍다"], answer: 0, explanation: "액체나 가루가 체표에 붙는 것은 '묻다'입니다." },
+            { id: 70, prefix: "시신이나 물건을 땅에 ", suffix: ".", options: ["묻다", "뭍다"], answer: 0, explanation: "매장하는 것은 '묻다'입니다." },
+            { id: 71, prefix: "선생님께 질문을 ", suffix: ".", options: ["묻다", "물다"], answer: 0, explanation: "질문하는 것은 '묻다'입니다." },
+            { id: 72, prefix: "올바른 음식 이름 조합: (", suffix: ")", options: ["육개장 / 닭개장", "육계장 / 닭계장"], answer: 0, explanation: "개장국에서 유래한 음식으로 '개장'이 맞습니다." },
+            { id: 73, prefix: "잠잘 때 머리에 베는 것: (", suffix: ")", options: ["베개", "베게"], answer: 0, explanation: "도구를 뜻하는 접미사 '-개'가 붙어 '베개'가 맞습니다." },
+            { 74: true, id: 74, prefix: "보글보글 끓인 음식: (", suffix: ")", options: ["찌개", "찌게"], answer: 0, explanation: "'찌개'가 올바른 표현입니다." },
+            { id: 75, prefix: "체언 뒤 종결: 저는 ", suffix: ".", options: ["학생이에요", "학생이예요"], answer: 0, explanation: "받침 있는 체언 뒤에는 '이에요'가 붙습니다." },
+            { id: 76, prefix: "받침 없는 체언 뒤: 너 정말 ", suffix: ".", options: ["바보예요", "바보이에요"], answer: 0, explanation: "받침 없는 체언 뒤에는 '예요'가 붙습니다." },
+            { 77: true, id: 77, prefix: "부정형 종결: 저는 학생이 ", suffix: ".", options: ["아니에요", "아니예요"], answer: 0, explanation: "'아니다' 뒤에는 '아니에요'가 맞습니다. (아니예요X)" },
+            { id: 78, prefix: "진작에 와서 ", suffix: "!", options: ["볼걸", "볼껄"], answer: 0, explanation: "어미 '-ㄹ걸'은 예사소리로 적습니다." },
+            { id: 79, prefix: "시험을 무사히 ", suffix: ".", options: ["치렀습니다", "치뤘습니다"], answer: 0, explanation: "기본형이 '치르다'이므로 으 탈락으로 '치렀습니다'가 맞습니다." },
+            { id: 80, prefix: "외출 시 문을 꼭 ", suffix: " 주세요.", options: ["잠가", "잠궈"], answer: 0, explanation: "기본형 '잠그다'의 어미 결합은 '잠가'입니다." },
+            { id: 81, prefix: "오랜 시간 지난 뒤: (", suffix: ")", options: ["오랜만에", "오랫만에"], answer: 0, explanation: "'오랜만에'가 올바른 부사 표기입니다." },
+            { id: 82, prefix: "체력이 부족하여 ", suffix: ".", options: ["달려서", "딸려서"], answer: 0, explanation: "힘이나 역량이 부족한 것은 '달리다(달려서)'입니다." },
+            { id: 83, prefix: "남의 뒤시중을 드는 일: (", suffix: ")", options: ["뒤치다꺼리", "뒤치닥거리"], answer: 0, explanation: "'뒤치다꺼리'가 올바른 표준어입니다." },
+            { 84: true, id: 84, prefix: "중얼거리는 모양: (", suffix: ")", options: ["구시렁거리다", "궁시렁거리다"], answer: 0, explanation: "'구시렁거리다'가 표준어입니다." },
+            { id: 85, prefix: "얼마만큼의 줄임말: (", suffix: ")", options: ["얼만큼 / 얼마큼 둘 다 가능", "얼마큼만 가능"], answer: 0, explanation: "'얼마큼'과 '얼만큼' 모두 널리 사용되는 표기입니다." },
+            { id: 86, prefix: "태도가 모호할 때: (", suffix: ")", options: ["두루뭉술", "두리몽실"], answer: 0, explanation: "'두루뭉술'과 '두리몽실' 모두 표준어입니다." },
+            { id: 87, prefix: "화투나 일 따위가 깨어짐: (", suffix: ")", options: ["파투", "파토"], answer: 0, explanation: "일이나 판이 깨지는 것은 '파투(破鬪)'가 맞습니다." },
+            { id: 88, prefix: "그릇을 씻는 일: (", suffix: ")", options: ["설거지", "설것이"], answer: 0, explanation: "원형을 살리지 않고 소리 나는 대로 '설거지'로 적습니다." },
+            { id: 89, prefix: "어리고 순진해 보이는: ", suffix: " 얼굴", options: ["앳된", "애띤"], answer: 0, explanation: "'앳되다(앳된)'가 맞습니다." },
+            { id: 90, prefix: "친구를 부르는 비속어적 호칭: 이 (", suffix: ")야!", options: ["인마", "임마"], answer: 0, explanation: "'놈아'에서 유래된 '인마'가 표준 표기입니다." },
+            { 91: true, id: 91, prefix: "마음이 들뜨는 감정: (", suffix: ")", options: ["설렘", "설레임"], answer: 0, explanation: "기본형 '설레다'의 명사형은 '설렘'입니다." },
+            { id: 92, prefix: "물건을 함부로 하지 말고 ", suffix: " 다루지 마라.", options: ["허투루", "허투로"], answer: 0, explanation: "부사 '허투루'가 올바릅니다." },
+            { id: 93, prefix: "말이나 행동이 터무니없음: ", suffix: "하다.", options: ["황당무계", "황당무개"], answer: 0, explanation: "'황당무계(荒唐無稽)'가 올바른 한자어 표기입니다." },
+            { id: 94, prefix: "은근히 넌지시 말할 때: ", suffix: " 물어보았다.", options: ["넌지시", "언지시"], answer: 0, explanation: "'넌지시'가 올바른 표준 부사입니다." },
+            { 95: true, id: 95, prefix: "과일을 껍질이 있는 그대로: ", suffix: " 먹었다.", options: ["껍질째", "껍질채"], answer: 0, explanation: "'그대로'의 뜻을 가진 접미사는 '-째'입니다." },
+            { id: 96, prefix: "한창 때를 의미: 지금 ", suffix: " 공부할 나이다.", options: ["한창", "한참"], answer: 0, explanation: "가장 활발한 시기는 '한창'입니다. (한참: 시간이 오래)" },
+            { id: 97, prefix: "어리석고 둔한 모양: (", suffix: ")하다.", options: ["어리바리", "어리버리"], answer: 0, explanation: "'어리바리하다'가 표준어입니다." },
+            { id: 98, prefix: "남을 억지로 남달리 볶아치다: ", suffix: "하다.", options: ["닦달", "닥달"], answer: 0, explanation: "'닦달하다'가 올바른 표기입니다." },
+            { id: 99, prefix: "어디에 대고의 줄임말: (", suffix: ") 대고 반말이니?", options: ["얻다", "어따"], answer: 0, explanation: "'어디에 다가'의 줄임말은 '얻다'입니다." },
+            { 100: true, id: 100, prefix: "뜻을 되새겨 생각함: (", suffix: ")", options: ["곱씹다", "곱십다"], answer: 0, explanation: "'곱씹다'가 올바릅니다." },
+            { id: 101, prefix: "세차게 밀어 제치다: (", suffix: ")", options: ["밀어붙이다", "밀어부치다"], answer: 0, explanation: "'밀어붙이다'가 올바른 표기입니다." },
+            { id: 102, prefix: "편지나 우편을 보내다: 편지를 ", suffix: ".", options: ["부쳤다", "붙였다"], answer: 0, explanation: "우편물을 보내는 것은 '부치다'입니다." },
+            { id: 103, prefix: "신체 무릎 표기: (", suffix: ")", options: ["무릎", "무릅"], answer: 0, explanation: "'무릎'이 올바른 ㅍ 받침 체언입니다." },
+            { id: 104, prefix: "쓸데없이 참견하는 성미: (", suffix: ")이 넓다.", options: ["오지랖", "오지랍"], answer: 0, explanation: "'오지랖'이 올바른 ㅍ 받침 단어입니다." },
+            { id: 105, prefix: "새것으로 수수관계를 바꿈: ", suffix: "하였다.", options: ["갈음", "가름"], answer: 0, explanation: "대체하는 것은 '갈음'입니다." },
+            { id: 106, prefix: "대략 어림잡아: ", suffix: " 1시간 걸린다.", options: ["겉잡아서", "걷잡아서"], answer: 0, explanation: "어림잡는 것은 '겉잡다'입니다." },
+            { 107: true, id: 107, prefix: "슬픔을 억제할 수 없음: 눈물이 ", suffix: " 수 없이 흐르다.", options: ["걷잡을", "겉잡을"], answer: 0, explanation: "거두어 지탱하거나 억제하는 것은 '걷잡다'입니다." },
+            { id: 108, prefix: "넋을 기리거나 하소연하는 말: (", suffix: ")", options: ["넋두리", "넉두리"], answer: 0, explanation: "'넋두리'가 올바른 표기입니다." },
+            { id: 109, prefix: "어찌 되었든 부사: (", suffix: ") 그렇게 알고 있어.", options: ["아무튼", "아무튼간"], answer: 0, explanation: "'아무튼'이 올바른 표준어입니다." },
+            { id: 110, prefix: "어찌 되었든 간에: (", suffix: ") 결과는 좋았다.", options: ["어쨌든", "어쨋든"], answer: 0, explanation: "'어쨌든'이 ㅆ 받침으로 올바릅니다." },
+            { 111: true, id: 111, prefix: "부모님 속을 (", suffix: ") 마라.", options: ["썩이지", "썩히지"], answer: 0, explanation: "마음고생을 시키는 것은 '썩이다'입니다. (재료를 삭히는 건 썩히다)" },
+            { id: 112, prefix: "살림이나 일이 아주 아작이 남: ", suffix: "나다.", options: ["결딴", "결단"], answer: 0, explanation: "아주 망가져 터지는 것은 '결딴나다'입니다." },
+            { id: 113, prefix: "도리나 원칙을 따라 행함: 원칙을 ", suffix: " 행동했다.", options: ["좇아", "쫓아"], answer: 0, explanation: "목표나 가치를 따라가는 것은 '좇다'입니다. (쫓다: 물리적 추격)" },
+            { id: 114, prefix: "지나친 행동을 멈춤: 담배를 ", suffix: " 주세요.", options: ["삼가", "삼가해"], answer: 0, explanation: "기본형이 '삼가다'이므로 '삼가'가 맞습니다. ('삼가하다'X)" },
+            { 115: true, id: 115, prefix: "황당할 때: 참 (", suffix: ")", options: ["어이없다", "어의없다"], answer: 0, explanation: "'어이없다'가 올바른 표현입니다." },
+            { id: 116, prefix: "지식을 전달함: 수학을 ", suffix: ".", options: ["가르치다", "가리키다"], answer: 0, explanation: "교육하는 것은 '가르치다'입니다." },
+            { id: 117, prefix: "카드 대금 정산일: 카드 (", suffix: ")", options: ["결제일", "결재일"], answer: 0, explanation: "대금을 정산하는 날은 '결제일(結濟日)'입니다." },
+            { id: 118, prefix: "상사 승인 서류: 부장님 ", suffix: " 서류", options: ["결재", "결제"], answer: 0, explanation: "서명 승인을 받는 것은 '결재(決裁)'입니다." },
+            { 119: true, id: 119, prefix: "기이하고 드묾: 참 (", suffix: ")한 일이다.", options: ["희한", "희안"], answer: 0, explanation: "'희한(稀罕)하다'가 올바른 한자 표기입니다." },
+            { id: 120, prefix: "굳게 약속함: ", suffix: "같이 약속했다.", options: ["철석", "철썩"], answer: 0, explanation: "쇠와 돌처럼 굳은 약속은 '철석(鐵石)같이'입니다." },
+            { id: 121, prefix: "병이 낳은 뒤 남는 증상: (", suffix: ")", options: ["후유증", "휴유증"], answer: 0, explanation: "'후유증(後遺症)'이 맞습니다." },
+            { id: 122, prefix: "경조사 축의금: (", suffix: ")", options: ["부조금", "부주금"], answer: 0, explanation: "'부조금(扶助金)'이 올바른 표준어입니다." },
+            { 123: true, id: 123, prefix: "마지못해/단호히: ", suffix: " 그럴 필요 있어?", options: ["굳이", "구지"], answer: 0, explanation: "구개음화로 소리 나지만 표기는 '굳이'입니다." },
+            { id: 124, prefix: "연애 관계를 맺음: 나랑 ", suffix: " 하자.", options: ["연애", "연예"], answer: 0, explanation: "남녀 간의 사랑은 '연애(戀愛)'입니다." },
+            { 125: true, id: 125, prefix: "방송 연예계 종사자: (", suffix: ")", options: ["연예인", "연애인"], answer: 0, explanation: "대중예술인을 뜻하는 말은 '연예인(演藝人)'입니다." },
+            { id: 126, prefix: "난이도가 높다: (", suffix: ") 문제", options: ["고난도", "고난이도"], answer: 0, explanation: "난이도 자체가 높낮이를 뜻하므로 높은 난도는 '고난도'입니다." },
+            { 127: true, id: 127, prefix: "하기에 딱 적당함: 딱 하기에 (", suffix: ")이다.", options: ["십상", "섭상"], answer: 0, explanation: "'십상(十常)이다'가 올바릅니다." },
+            { id: 128, prefix: "결국 사고나 이상한 일이 터짐: 결국 (", suffix: ")이 났다.", options: ["사달", "사단"], answer: 0, explanation: "사고나 탈이 난 것은 '사달'이 표준어입니다." },
+            { 129: true, id: 129, prefix: "천둥소리: (", suffix: ") 같은 함성", options: ["우레", "우뢰"], answer: 0, explanation: "천둥의 순우리말은 '우레'입니다." },
+            { id: 130, prefix: "이 분야에서 스스로 으뜸이라 자처함: (", suffix: ")는 전문가", options: ["내로라하", "내노라하"], answer: 0, explanation: "'나 이로라'에서 유래된 '내로라하다'가 올바릅니다." },
+            { 131: true, id: 131, prefix: "거부하고 멀리함: 아동 학대를 (", suffix: ")하자.", options: ["지양", "지향"], answer: 0, explanation: "하지 않도록 피하는 것은 '지양'입니다. (지향: 목표로 삼음)" },
+            { id: 132, prefix: "까닭/이유의 연결어미: 그가 나를 (", suffix: ") 나도 그를 믿는다.", options: ["믿으므로", "믿음으로"], answer: 0, explanation: "이유나 까닭을 나타낼 때는 어미 '-으므로'를 씁니다." },
+            { 133: true, id 133, prefix: "서로 같지 않음: 너와 나는 생각이 ", suffix: ".", options: ["다르다", "틀리다"], answer: 0, explanation: "Difference는 '다르다'입니다. (틀리다: Wrong)" },
+            { id: 134, prefix: "선택 어미: 가든지 오든지 (", suffix: ")", options: ["하든지 말든지", "하던지 말던지"], answer: 0, explanation: "선택은 '-든지', 과거 회상은 '-던지'입니다." },
+            { 135: true, id: 135, prefix: "자격/신분: 내가 (", suffix: ") 말하는데", options: ["엄마로서", "엄마로써"], answer: 0, explanation: "자격이나 신분 뒤에는 '-로서'를 씁니다." },
+            { id: 136, prefix: "공간/장소 및 수단: 집에 (", suffix: ") 전화해.", options: ["도착하는 대로", "도착하는 데로"], answer: 0, explanation: "즉시를 뜻하는 의존명사는 '대로'입니다." },
+            { 137: true, id: 137, prefix: "전해 들은 사실 전달: 둘이 사귄( ", suffix: " )", options: ["대", "데"], answer: 0, explanation: "남에게 들은 이야기를 전달할 때는 '-대'를 씁니다." },
+            { id: 138, prefix: "시간상의 조금 뒤: (", suffix: ") 만나자.", options: ["이따가", "있다가"], answer: 0, explanation: "조금 후에라는 뜻의 부사는 '이따가'입니다." },
+            { 139: true, id: 139, prefix: "사방으로 사분오열 흩어짐: (", suffix: ") 났다.", options: ["풍비박산", "풍지박산"], answer: 0, explanation: "'풍비박산(風飛雹散)'이 올바른 한자어 표기입니다." },
+            { id: 140, prefix: "운명이 위태로운 지경: (", suffix: ")의 위기", options: ["절체절명", "절대절명"], answer: 0, explanation: "'절체절명(切體絶命)'이 올바른 표기입니다." },
+            { 141: true, id: 141, prefix: "기쁨과 괴로움을 함께함: (", suffix: ")하며 지내다.", options: ["동고동락", "동거동락"], answer: 0, explanation: "괴로움(苦)과 즐거움(樂)을 나누는 것은 '동고동락'입니다." },
+            { id: 142, prefix: "처음부터 끝까지의 경위: (", suffix: ")을 밝히다.", options: ["자초지종", "자초지정"], answer: 0, explanation: "'자초지종(自初至終)'이 올바릅니다." },
+            { 143: true, id: 143, prefix: "화면 캡처 외래어 표기: (", suffix: ")", options: ["캡처", "캡쳐"], answer: 0, explanation: "외래어 표기법상 ㅊ 뒤의 야,여,요,유는 차,처,초,추로 적으므로 '캡처'가 맞습니다." },
+            { id: 144, prefix: "요리사 외래어 표기: (", suffix: ")", options: ["셰프", "쉐프"], answer: 0, explanation: "'셰프'가 올바른 외래어 표기입니다." },
+            { 145: true, id: 145, prefix: "초인 영웅 이름 외래어 표기: (", suffix: ")", options: ["슈퍼맨", "수퍼맨"], answer: 0, explanation: "'슈퍼맨'이 표준 외래어 표기입니다." },
+            { id: 146, prefix: "프라이팬 외래어 표기: (", suffix: ")", options: ["프라이팬", "후라이팬"], answer: 0, explanation: "f 발음은 'ㅍ'으로 적으므로 '프라이팬'이 맞습니다." },
+            { 147: true, id: 147, prefix: "길 안내 장치 외래어 표기: (", suffix: ")", options: ["내비게이션", "네비게이션"], answer: 0, explanation: "'내비게이션'이 표준 외래어 표기입니다." },
+            { id: 148, prefix: "생일 디저트 외래어 표기: (", suffix: ")", options: ["케이크", "케익"], answer: 0, explanation: "'케이크'가 올바른 외래어 표준어입니다." },
+            { 149: true, id: 149, prefix: "수중 호흡 다이빙 외래어 표기: (", suffix: ")", options: ["스노클링", "스노쿨링"], answer: 0, explanation: "'스노클링'이 올바른 외래어 표기입니다." },
+            { 150: true, id: 150, prefix: "지도자로서의 능력/자질: (", suffix: ")", options: ["리더십", "리더쉽"], answer: 0, explanation: "접미사 '-ship'은 '십'으로 적으므로 '리더십'이 맞습니다." }
+        ];
+
+        // App Logic Variables
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = [];
+        let rangeStartIndex = 0;
+        let rangeEndIndex = 150;
+        let isWrongOnlyMode = false;
+
+        function selectRange(start, end) {
+            rangeStartIndex = start;
+            rangeEndIndex = end;
+            
+            // Highlight Buttons
+            const rangeBtns = document.querySelectorAll('.range-btn');
+            rangeBtns.forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+            });
+            event.target.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+        }
+
+        function startQuiz() {
+            activeQuestions = fullQuizData.slice(rangeStartIndex, rangeEndIndex);
+            currentIndex = 0;
+            userAnswers = new Array(activeQuestions.length).fill(null);
+            isWrongOnlyMode = false;
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('note-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+
+            loadQuestion();
+        }
+
+        function startWrongOnlyQuiz() {
+            // Filter only wrong answered questions from previous run
+            const wrongQuestions = activeQuestions.filter((q, idx) => userAnswers[idx] !== q.answer);
+            if (wrongQuestions.length === 0) return;
+
+            activeQuestions = wrongQuestions;
+            currentIndex = 0;
+            userAnswers = new Array(activeQuestions.length).fill(null);
+            isWrongOnlyMode = true;
+
+            document.getElementById('note-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const data = activeQuestions[currentIndex];
+            
+            // Header Info
+            const currentScore = userAnswers.reduce((acc, ans, idx) => (ans === activeQuestions[idx].answer ? acc + 1 : acc), 0);
+            document.getElementById('quiz-badge').innerText = `${isWrongOnlyMode ? '오답재시험' : '문제'} ${currentIndex + 1} / ${activeQuestions.length}`;
+            document.getElementById('current-score').innerText = currentScore;
+            
+            // Progress Bar
+            const progress = ((currentIndex + 1) / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            // Question Box
+            document.getElementById('question-number').innerText = `NO. ${data.id}`;
+            document.getElementById('question-text').innerHTML = `
+                ${data.prefix}<span class="inline-block border-b-2 border-indigo-600 px-2 text-indigo-600 font-extrabold">( ? )</span>${data.suffix}
+            `;
+
+            // Options
+            const opt0 = document.getElementById('opt-0');
+            const opt1 = document.getElementById('opt-1');
+
+            opt0.innerText = data.options[0];
+            opt1.innerText = data.options[1];
+
+            // Reset Styles
+            [opt0, opt1].forEach((btn) => {
+                btn.className = "option-btn p-4 text-lg font-bold border-2 border-slate-200 rounded-2xl hover:border-indigo-500 hover:bg-indigo-50/40 transition-all text-slate-800 flex items-center justify-center min-h-[64px] shadow-sm";
+                btn.disabled = false;
+            });
+
+            document.getElementById('explanation-box').classList.add('hidden');
+
+            // Restore answered state if user went back/forth
+            if (userAnswers[currentIndex] !== null) {
+                highlightOption(userAnswers[currentIndex]);
+            }
+
+            // Controls
+            document.getElementById('prev-btn').classList.toggle('hidden', currentIndex === 0);
+            document.getElementById('next-btn').classList.toggle('hidden', userAnswers[currentIndex] === null);
+        }
+
+        function selectOption(index) {
+            if (userAnswers[currentIndex] !== null) return; // Prevent re-click
+
+            userAnswers[currentIndex] = index;
+            highlightOption(index);
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function highlightOption(selectedIndex) {
+            const data = activeQuestions[currentIndex];
+            const opt0 = document.getElementById('opt-0');
+            const opt1 = document.getElementById('opt-1');
+            const expBox = document.getElementById('explanation-box');
+            const resultStatus = document.getElementById('result-status');
+            const expText = document.getElementById('explanation-text');
+
+            [opt0, opt1].forEach(btn => btn.disabled = true);
+
+            const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+            const correctBtn = document.getElementById(`opt-${data.answer}`);
+
+            if (selectedIndex === data.answer) {
+                selectedBtn.classList.add('correct-btn');
+                resultStatus.innerText = "⭕ 정답입니다!";
+                resultStatus.className = "font-bold text-base mb-1 text-emerald-600";
+            } else {
+                selectedBtn.classList.add('wrong-btn');
+                correctBtn.classList.add('correct-btn');
+                resultStatus.innerText = "❌ 오답입니다!";
+                resultStatus.className = "font-bold text-base mb-1 text-rose-600";
+            }
+
+            expText.innerText = data.explanation;
+            expBox.classList.remove('hidden');
+
+            // Update live score
+            const currentScore = userAnswers.reduce((acc, ans, idx) => (ans === activeQuestions[idx].answer ? acc + 1 : acc), 0);
+            document.getElementById('current-score').innerText = currentScore;
+        }
+
+        function nextQuestion() {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const total = activeQuestions.length;
+            const correctCount = userAnswers.reduce((acc, ans, idx) => (ans === activeQuestions[idx].answer ? acc + 1 : acc), 0);
+            const wrongCount = total - correctCount;
+            const percentage = Math.round((correctCount / total) * 100);
+
+            document.getElementById('res-total').innerText = total;
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-wrong').innerText = wrongCount;
+            document.getElementById('score-percentage').innerText = `점수: ${percentage}점`;
+            document.getElementById('wrong-count-badge').innerText = wrongCount;
+            document.getElementById('result-range-info').innerText = isWrongOnlyMode ? "오답 재시험 결과" : `풀이 범위: ${rangeStartIndex + 1}번 ~ ${rangeEndIndex}번`;
+
+            // Toggle Incorrect Note Button active/inactive
+            const noteBtn = document.getElementById('incorrect-note-btn');
+            if (wrongCount === 0) {
+                noteBtn.disabled = true;
+                noteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                noteBtn.disabled = false;
+                noteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function openIncorrectNote() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('note-screen').classList.remove('hidden');
+
+            const container = document.getElementById('wrong-list-container');
+            container.innerHTML = '';
+
+            activeQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] !== q.answer) {
+                    const userSelectedStr = q.options[userAnswers[idx]];
+                    const correctStr = q.options[q.answer];
+
+                    const itemHtml = `
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-left">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs font-bold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">NO. ${q.id}</span>
+                                <span class="text-xs text-slate-400">내가 선택한 답: <span class="text-rose-600 font-bold line-through">${userSelectedStr}</span></span>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-800 mb-2">
+                                ${q.prefix}<span class="text-emerald-600 underline font-black decoration-2">${correctStr}</span>${q.suffix}
+                            </h4>
+                            <p class="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-100 leading-relaxed">
+                                💡 <span class="font-semibold text-slate-700">해설:</span> ${q.explanation}
+                            </p>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', itemHtml);
+                }
+            });
+        }
+
+        function showResultFromNote() {
+            document.getElementById('note-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+        }
+
+        function resetQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
